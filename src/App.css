@@ -8,5 +8,12 @@ li{
 }
 table{
     margin-top: 40px;
-    max-width: 400px;
+    max-width: 500px;
+}
+.todo{
+    max-width: 550px;
+    margin: 0 auto;
+    margin-top: 96px;
+    background: aliceblue;
+    padding: 41px;
 }

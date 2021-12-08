@@ -13,7 +13,7 @@ const Todo = () => {
             else data.splice(index, 1, {name})
             success(`${index !== null ? "Record Updated" : "Record Added"}`)
             setList(data)
-        }else if(name.length<1) error('Fill fill the field')
+        }else if(name.length<1) error('Please fill the field')
     }
     const emptyBio = () =>{
         setName('')
@@ -23,6 +23,7 @@ const Todo = () => {
         const data = [...list]
         data.splice(i, 1)
         setList(data)
+        error("Record Deleted")
     }
 
     const editData = (i) =>{
@@ -57,7 +58,7 @@ const Todo = () => {
       }
   
     return (
-        <div className="m-5">
+        <div className="todo">
             Name : <input type="text"placeholder="Enter Name" value={name}
             onChange={(e)=>setName(e.target.value)}></input>
             <button onClick={()=>{
@@ -78,7 +79,10 @@ const Todo = () => {
                            <tr key={i}>
                                <td>{data.name}</td>
                                <td><button onClick={()=>editData(i)}>Edit</button></td>
-                               <td><button onClick={(i)=>deleteData(i)}>Delete</button> </td>
+                               <td><button onClick={()=>{
+                                    if (window.confirm("DO you want to delete record"))
+                                   deleteData(i)
+                            }}>Delete</button> </td>
                            </tr>
 
                         )
