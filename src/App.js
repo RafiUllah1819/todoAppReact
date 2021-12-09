@@ -1,13 +1,15 @@
 
 import React from 'react'
 import Todo from './Todo'
-import './App.css'
+import Todos from './Todos'
+import './App.css';
 
 const App = () => {
 
 return (
   <div className="App">
-    <Todo />
+    {/* <Todo /> */}
+    <Todos />
   </div>
 )
 }
