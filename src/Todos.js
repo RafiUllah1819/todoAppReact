@@ -1,9 +1,13 @@
-import React , {useState} from 'react';
+import React , {useState ,useEffect} from 'react';
 import { toast } from 'react-toastify';
 
 const Todos = () => {
 
-    const [index, setIndex] = useState(null)
+    const [index, setIndex] = useState({
+        editData: {},
+        x : null
+    })
+    const [filterData , setFilterData] = useState([])
     const [list, setList] = useState([])
     const [state, setState] = useState({
         name: '',
@@ -14,9 +18,9 @@ const Todos = () => {
         if(state.name.length>0 && state.password.length>0){
             const copy = [...list]
             const obj = {name: state.name, password: state.password}
-            if(index === null)  copy.push(obj)
-            else copy.splice(index, 1 , obj)
-            success(` ${index !== null ? "Record Updated" : "Record Added" } `)
+            if(index.x === null)  copy.push(obj)
+            else copy.splice(index.x, 1 , obj)
+            success(` ${index.x !== null ? "Record Updated" : "Record Added" } `)
             setList(copy)
             emptyField()
         }else{
@@ -24,8 +28,12 @@ const Todos = () => {
             if(state.password.length<1) error('Password is empty')
         }
     }
-    // console.log(list)
-      // console.log(index)
+
+    useEffect(()=>{
+        setFilterData(list)
+    },[list])
+    console.log(list)
+      console.log(index)
 
     const emptyField = () =>{
         setState({
@@ -52,11 +60,32 @@ const Todos = () => {
        
     } 
     const editRecord = (i) =>{
+        const temp = [...list]
+        temp.x = i;
+        let temp1 = list[i]
         setIndex(i)
+        setIndex({
+            ...index, editData: temp1, x: i 
+        })
         setState({
             name:list[i].name,
             password: list[i].password
         })
+    }
+    console.log("index" ,index)
+    console.log("editdata" , index.editData)
+    console.log("x" , index.x)
+    console.log("list" , list)
+    const filterRecord = (e) =>{
+        const value = e.target.value;
+        let arr = []
+        if(value.length>=3){
+            arr = filterData.filter((data)=>{
+                return data.name.toLowerCase().startsWith(value.toLowerCase())
+            })
+            setFilterData(arr)
+        }else
+        setFilterData(list)
     }
   
     const error = (msg) => {
@@ -84,15 +113,26 @@ const Todos = () => {
 
     return (
         <div className='todo'>
-           <h5>Todo App</h5>
-           <input type="text" placeholder="Name" onChange={onChangeName} value={state.name}></input>
-           <input type="password" placeholder="Password" onChange={onChangePassword} value={state.password}></input>
-           <button className='mt-3' onClick={()=>
+           <h5 className='text-center mb-4'>Todo App</h5>
+           <div className='search d-flex justify-content-between'>
+           <h5>Total Records : {filterData.length}</h5>
+                <div className='form-group'>
+                    <input type='search' className='form-control' onChange={filterRecord} placeholder='search'></input>
+                </div>
+           </div>
+           <div className='form-group'>
+           <input type="text" className='form-control' placeholder="Name" onChange={onChangeName} value={state.name}></input>
+           </div>
+          <div className='form-group'>
+          <input type="password"  className='form-control' placeholder="Password" onChange={onChangePassword} value={state.password}></input>
+          </div>
+           <button className='btn btn-success' onClick={()=>
                 addRecord()
            }>Submit</button>
            <table className='table table-hover'>
                <thead>
                    <tr>
+                       <th>Id</th>
                        <th>Name</th>
                        <th>Password</th>
                        <th>Edit</th>
@@ -101,13 +141,14 @@ const Todos = () => {
                </thead>
                <tbody>
                   {
-                      list.map((data , i)=>{
+                      filterData.map((data , i)=>{
                           return(
                               <tr>
+                                  <td>{i+1}</td>
                                   <td>{data.name}</td>
                                   <td>{data.password}</td>
-                                  <td><button onClick={()=>editRecord(i)}>Edit</button></td>
-                                  <td><button onClick={()=>{
+                                  <td><button className='btn btn-primary' onClick={()=>editRecord(i)}>Edit</button></td>
+                                  <td><button className='btn btn-danger' onClick={()=>{
                                     if (window.confirm("DO you want to delete record"))
                                      deleteRecord(i)
                                   }
